@@ -1,0 +1,4 @@
+Bundle 'rstacruz/sparkup'
+Bundle 'Lokaltog/vim-easymotion'
+Bundle 'wikitopian/hardmode'
+Bundle 'bronson/vim-trailing-whitespace'
