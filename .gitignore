@@ -1,0 +1,15 @@
+*.rbc
+*.ruby-version
+*.rbenv-vars
+*.rubocop.yml
+*.DS_Store
+*.idea
+*.iml
+Procfile
+Procfile.local
+.env
+vendor/plugins/rails_upgrade
+*.rails2
+*.pt
+*.tags
+tags

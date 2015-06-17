@@ -1,0 +1,16 @@
+[user]
+  name = Lewis
+  email = lewis@10to1.be
+[alias]
+  z = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
+  ff = flow feature finish
+  fs = flow feature start
+  sup = !git push --set-upstream origin `git symbolic-ref --short HEAD`
+[core]
+  excludesfile = /Users/lewis/.gitignore
+  quotepath = false
+  editor = vim
+[color]
+  ui = true
+[push]
+  default = simple
