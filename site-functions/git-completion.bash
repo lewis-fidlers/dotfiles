@@ -1,0 +1,1 @@
+../../../Cellar/git/2.4.0/share/zsh/site-functions/git-completion.bash
