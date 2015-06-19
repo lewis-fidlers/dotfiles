@@ -6,5 +6,5 @@
 function velo_position() {
 velo_email="lewisfidlers@gmail.com"
 curl -sS -X POST -d "CustEmail=$velo_email&form_id=checkposition_form" "https://www.velo-antwerpen.be/nl/registreren/wachtlijst-positie"
-echo "An email will be arriving soon for: " + velo_email
+echo "An email will be arriving soon for: " + $velo_email
 }
