@@ -1,9 +1,5 @@
 # zsh functions
 
-function test(){
-echo "test 123"
-}
-
 # Needs VELO_EMAIL to be set, will submit the form which will send a mail with the
 # current waiting list number. (Not really sure why it doesn't send back the actual
 # number)
