@@ -16,17 +16,11 @@
 #
 # To use these routines:
 #
-#    1) Copy this file to somewhere (e.g. ~/.git-completion.bash).
+#    1) Copy this file to somewhere (e.g. ~/.git-completion.sh).
 #    2) Add the following line to your .bashrc/.zshrc:
-#        source ~/.git-completion.bash
+#        source ~/.git-completion.sh
 #    3) Consider changing your PS1 to also show the current branch,
 #       see git-prompt.sh for details.
-#
-# If you use complex aliases of form '!f() { ... }; f', you can use the null
-# command ':' as the first command in the function body to declare the desired
-# completion style.  For example '!f() { : git commit ; ... }; f' will
-# tell the completion to use commit completion.  This also works with aliases
-# of form "!sh -c '...'".  For example, "!sh -c ': git commit ; ... '".
 
 case "$COMP_WORDBREAKS" in
 *:*) : great ;;
@@ -127,237 +121,7 @@ __git_reassemble_comp_words_by_ref()
 		while
 			[ $i -gt 0 ] &&
 			[ -n "${COMP_WORDS[$i]}" ] &&
-                        kip to content
-                        This repository
-
-                            Explore
-                                Gist
-                                    Blog
-                                        Help
-
-                                            Lewis 10tolewis
-
-                                            937
-                                            8,388
-
-                                                4,803
-
-                                                git/git
-
-                                                git/contrib/completion/git-completion.zsh
-                                                Junio C Hamano gitster on 7 Jan
-                                                Merge branch 'pd/completion-filenames-fix'
-
-                                                5 contributors
-                                                Felipe Contreras Ramkumar Ramachandra Junio C Hamano Matthieu Moy Peter van der Does
-                                                226 lines (192 sloc) 5.776 kb
-                                                #compdef git gitk
-                                                # zsh completion wrapper for git
-                                                #
-                                                # Copyright (c) 2012-2013 Felipe Contreras <felipe.contreras@gmail.com>
-                                                #
-                                                # You need git's bash completion script installed somewhere, by default it
-                                                # would be the location bash-completion uses.
-                                                #
-                                                # If your script is somewhere else, you can configure it on your ~/.zshrc:
-                                                #
-                                                # zstyle ':completion:*:*:git:*' script ~/.git-completion.zsh
-                                                #
-                                                # The recommended way to install this script is to copy to '~/.zsh/_git', and
-                                                # then add the following to your ~/.zshrc file:
-                                                #
-                                                # fpath=(~/.zsh $fpath)
-                                                complete ()
-                                                {
-                                                  # do nothing
-                                                  return 0
-                                                }
-                                                zstyle -T ':completion:*:*:git:*' tag-order && \
-                                                  zstyle ':completion:*:*:git:*' tag-order 'common-commands'
-                                                zstyle -s ":completion:*:*:git:*" script script
-                                                if [ -z "$script" ]; then
-                                                  local -a locations
-                                                  local e
-                                                  locations=(
-                                                  $(dirname ${funcsourcetrace[1]%:*})/git-completion.bash
-                                                  '/etc/bash_completion.d/git' # fedora, old debian
-                                                  '/usr/share/bash-completion/completions/git' # arch, ubuntu, new debian
-                                                  '/usr/share/bash-completion/git' # gentoo
-                                                  )
-                                                  for e in $locations; do
-                                                    test -f $e && script="$e" && break
-                                                  done
-                                                fi
-                                                ZSH_VERSION='' . "$script"
-                                                __gitcomp ()
-                                                {
-                                                  emulate -L zsh
-                                                  local cur_="${3-$cur}"
-                                                  case "$cur_" in
-                                                    --*=)
-                                                      ;;
-                                                    *)
-                                                      local c IFS=$' \t\n'
-                                                      local -a array
-                                                      for c in ${=1}; do
-                                                        c="$c${4-}"
-                                                        case $c in
-                                                          --*=*|*.) ;;
-                                                        *) c="$c " ;;
-                                                      esac
-                                                      array+=("$c")
-                                                    done
-                                                    compset -P '*[=:]'
-                                                    compadd -Q -S '' -p "${2-}" -a -- array && _ret=0
-                                                    ;;
-                                                esac
-                                              }
-                                              __gitcomp_nl ()
-                                              {
-                                                emulate -L zsh
-                                                local IFS=$'\n'
-                                                compset -P '*[=:]'
-                                                compadd -Q -S "${4- }" -p "${2-}" -- ${=1} && _ret=0
-                                              }
-                                              __gitcomp_nl_append ()
-                                              {
-                                                emulate -L zsh
-                                                local IFS=$'\n'
-                                                compadd -Q -S "${4- }" -p "${2-}" -- ${=1} && _ret=0
-                                              }
-                                              __gitcomp_file ()
-                                              {
-                                                emulate -L zsh
-                                                local IFS=$'\n'
-                                                compset -P '*[=:]'
-                                                compadd -Q -p "${2-}" -f -- ${=1} && _ret=0
-                                              }
-                                              __git_zsh_bash_func ()
-                                              {
-                                                emulate -L ksh
-                                                local command=$1
-                                                local completion_func="_git_${command//-/_}"
-                                                declare -f $completion_func >/dev/null && $completion_func && return
-                                                local expansion=$(__git_aliased_command "$command")
-                                                if [ -n "$expansion" ]; then
-                                                  words[1]=$expansion
-                                                  completion_func="_git_${expansion//-/_}"
-                                                  declare -f $completion_func >/dev/null && $completion_func
-                                                fi
-                                              }
-                                              __git_zsh_cmd_common ()
-                                              {
-                                                local -a list
-                                                list=(
-                                                add:'add file contents to the index'
-                                                bisect:'find by binary search the change that introduced a bug'
-                                                branch:'list, create, or delete branches'
-                                                checkout:'checkout a branch or paths to the working tree'
-                                                clone:'clone a repository into a new directory'
-                                                commit:'record changes to the repository'
-                                                diff:'show changes between commits, commit and working tree, etc'
-                                                fetch:'download objects and refs from another repository'
-                                                grep:'print lines matching a pattern'
-                                                init:'create an empty Git repository or reinitialize an existing one'
-                                                log:'show commit logs'
-                                                merge:'join two or more development histories together'
-                                                mv:'move or rename a file, a directory, or a symlink'
-                                                pull:'fetch from and merge with another repository or a local branch'
-                                                push:'update remote refs along with associated objects'
-                                                rebase:'forward-port local commits to the updated upstream head'
-                                                reset:'reset current HEAD to the specified state'
-                                                rm:'remove files from the working tree and from the index'
-                                                show:'show various types of objects'
-                                                status:'show the working tree status'
-                                                tag:'create, list, delete or verify a tag object signed with GPG')
-                                                _describe -t common-commands 'common commands' list && _ret=0
-                                              }
-                                              __git_zsh_cmd_alias ()
-                                              {
-                                                local -a list
-                                                list=(${${${(0)"$(git config -z --get-regexp '^alias\.')"}#alias.}%$'\n'*})
-                                                _describe -t alias-commands 'aliases' list $* && _ret=0
-                                              }
-                                              __git_zsh_cmd_all ()
-                                              {
-                                                local -a list
-                                                emulate ksh -c __git_compute_all_commands
-                                                list=( ${=__git_all_commands} )
-                                                _describe -t all-commands 'all commands' list && _ret=0
-                                              }
-                                              __git_zsh_main ()
-                                              {
-                                                local curcontext="$curcontext" state state_descr line
-                                                typeset -A opt_args
-                                                local -a orig_words
-                                                orig_words=( ${words[@]} )
-                                                _arguments -C \
-                                                  '(-p --paginate --no-pager)'{-p,--paginate}'[pipe all output into ''less'']' \
-                                                  '(-p --paginate)--no-pager[do not pipe git output into a pager]' \
-                                                  '--git-dir=-[set the path to the repository]: :_directories' \
-                                                  '--bare[treat the repository as a bare repository]' \
-                                                  '(- :)--version[prints the git suite version]' \
-                                                  '--exec-path=-[path to where your core git programs are installed]:: :_directories' \
-                                                  '--html-path[print the path where git''s HTML documentation is installed]' \
-                                                  '--info-path[print the path where the Info files are installed]' \
-                                                  '--man-path[print the manpath (see `man(1)`) for the man pages]' \
-                                                  '--work-tree=-[set the path to the working tree]: :_directories' \
-                                                  '--namespace=-[set the git namespace]' \
-                                                  '--no-replace-objects[do not use replacement refs to replace git objects]' \
-                                                  '(- :)--help[prints the synopsis and a list of the most commonly used commands]: :->arg' \
-                                                  '(-): :->command' \
-                                                  '(-)*:: :->arg' && return
-                                                case $state in
-                                                  (command)
-                                                    _alternative \
-                                                      'alias-commands:alias:__git_zsh_cmd_alias' \
-                                                      'common-commands:common:__git_zsh_cmd_common' \
-                                                      'all-commands:all:__git_zsh_cmd_all' && _ret=0
-                                                    ;;
-                                                  (arg)
-                                                    local command="${words[1]}" __git_dir
-                                                    if (( $+opt_args[--bare] )); then
-                                                      __git_dir='.'
-                                                    else
-                                                      __git_dir=${opt_args[--git-dir]}
-                                                    fi
-                                                    (( $+opt_args[--help] )) && command='help'
-                                                    words=( ${orig_words[@]} )
-                                                    __git_zsh_bash_func $command
-                                                    ;;
-                                                esac
-                                              }
-                                              _git ()
-                                              {
-                                                local _ret=1
-                                                local cur cword prev
-                                                cur=${words[CURRENT]}
-                                                prev=${words[CURRENT-1]}
-                                                let cword=CURRENT-1
-                                                if (( $+functions[__${service}_zsh_main] )); then
-                                                  __${service}_zsh_main
-                                                else
-                                                  emulate ksh -c __${service}_main
-                                                fi
-                                                let _ret && _default && _ret=0
-                                                return _ret
-                                              }
-                                              _git
-
-                                                  Status
-                                                      API
-                                                          Training
-                                                              Shop
-                                                                  Blog
-                                                                      About
-
-                                                                          © 2015 GitHub, Inc.
-                                                                              Terms
-                                                                                  Privacy
-                                                                                      Security
-                                                                                          Contact
-
-
+			# word consists of excluded word separators
 			[ "${COMP_WORDS[$i]//[^$exclude]}" = "${COMP_WORDS[$i]}" ]
 		do
 			# Attach to the previous token,
@@ -511,12 +275,16 @@ __gitcomp_file ()
 # argument, and using the options specified in the second argument.
 __git_ls_files_helper ()
 {
-	if [ "$2" == "--committable" ]; then
-		git -C "$1" diff-index --name-only --relative HEAD
-	else
-		# NOTE: $2 is not quoted in order to support multiple options
-		git -C "$1" ls-files --exclude-standard $2
-	fi 2>/dev/null
+	(
+		test -n "${CDPATH+set}" && unset CDPATH
+		cd "$1"
+		if [ "$2" == "--committable" ]; then
+			git diff-index --name-only --relative HEAD
+		else
+			# NOTE: $2 is not quoted in order to support multiple options
+			git ls-files --exclude-standard $2
+		fi
+	) 2>/dev/null
 }
 
 
@@ -614,8 +382,7 @@ __git_refs ()
 		;;
 	*)
 		echo "HEAD"
-		git for-each-ref --format="%(refname:short)" -- \
-			"refs/remotes/$dir/" 2>/dev/null | sed -e "s#^$dir/##"
+		git for-each-ref --format="%(refname:short)" -- "refs/remotes/$dir/" | sed -e "s#^$dir/##"
 		;;
 	esac
 }
@@ -749,7 +516,7 @@ __git_complete_index_file ()
 		;;
 	esac
 
-	__gitcomp_file "$(__git_index_files "$1" ${pfx:+"$pfx"})" "$pfx" "$cur_"
+	__gitcomp_file "$(__git_index_files "$1" "$pfx")" "$pfx" "$cur_"
 }
 
 __git_complete_file ()
@@ -1014,10 +781,6 @@ __git_aliased_command ()
 		-*)	: option ;;
 		*=*)	: setting env ;;
 		git)	: git itself ;;
-		\(\))   : skip parens of shell function definition ;;
-		{)	: skip start of shell helper function ;;
-		:)	: skip null command ;;
-		\'*)	: skip opening quote after sh -c ;;
 		*)
 			echo "$word"
 			return
@@ -1402,8 +1165,8 @@ __git_diff_common_options="--stat --numstat --shortstat --summary
 			--full-index --binary --abbrev --diff-filter=
 			--find-copies-harder
 			--text --ignore-space-at-eol --ignore-space-change
-			--ignore-all-space --ignore-blank-lines --exit-code
-			--quiet --ext-diff --no-ext-diff
+			--ignore-all-space --exit-code --quiet --ext-diff
+			--no-ext-diff
 			--no-prefix --src-prefix= --dst-prefix=
 			--inter-hunk-context=
 			--patience --histogram --minimal
@@ -1434,7 +1197,7 @@ _git_diff ()
 }
 
 __git_mergetools_common="diffuse diffmerge ecmerge emerge kdiff3 meld opendiff
-			tkdiff vimdiff gvimdiff xxdiff araxis p4merge bc codecompare
+			tkdiff vimdiff gvimdiff xxdiff araxis p4merge bc3 codecompare
 "
 
 _git_difftool ()
@@ -1458,20 +1221,14 @@ _git_difftool ()
 	__git_complete_revlist_file
 }
 
-__git_fetch_recurse_submodules="yes on-demand no"
-
 __git_fetch_options="
 	--quiet --verbose --append --upload-pack --force --keep --depth=
-	--tags --no-tags --all --prune --dry-run --recurse-submodules=
+	--tags --no-tags --all --prune --dry-run
 "
 
 _git_fetch ()
 {
 	case "$cur" in
-	--recurse-submodules=*)
-		__gitcomp "$__git_fetch_recurse_submodules" "" "${cur##--recurse-submodules=}"
-		return
-		;;
 	--*)
 		__gitcomp "$__git_fetch_options"
 		return
@@ -1655,7 +1412,7 @@ __git_log_gitk_options="
 # Options that go well for log and shortlog (not gitk)
 __git_log_shortlog_options="
 	--author= --committer= --grep=
-	--all-match --invert-grep
+	--all-match
 "
 
 __git_log_pretty_formats="oneline short medium full fuller email raw format:"
@@ -1694,7 +1451,6 @@ _git_log ()
 			--abbrev-commit --abbrev=
 			--relative-date --date=
 			--pretty= --format= --oneline
-			--show-signature
 			--cherry-pick
 			--graph
 			--decorate --decorate=
@@ -1710,12 +1466,9 @@ _git_log ()
 	__git_complete_revlist
 }
 
-# Common merge options shared by git-merge(1) and git-pull(1).
 __git_merge_options="
 	--no-commit --no-stat --log --no-log --squash --strategy
 	--commit --stat --no-squash --ff --no-ff --ff-only --edit --no-edit
-	--verify-signatures --no-verify-signatures --gpg-sign
-	--quiet --verbose --progress --no-progress
 "
 
 _git_merge ()
@@ -1724,8 +1477,7 @@ _git_merge ()
 
 	case "$cur" in
 	--*)
-		__gitcomp "$__git_merge_options
-			--rerere-autoupdate --no-rerere-autoupdate --abort"
+		__gitcomp "$__git_merge_options"
 		return
 	esac
 	__gitcomp_nl "$(__git_refs)"
@@ -1831,10 +1583,6 @@ _git_pull ()
 	__git_complete_strategy && return
 
 	case "$cur" in
-	--recurse-submodules=*)
-		__gitcomp "$__git_fetch_recurse_submodules" "" "${cur##--recurse-submodules=}"
-		return
-		;;
 	--*)
 		__gitcomp "
 			--rebase --no-rebase
@@ -1847,55 +1595,22 @@ _git_pull ()
 	__git_complete_remote_or_refspec
 }
 
-__git_push_recurse_submodules="check on-demand"
-
-__git_complete_force_with_lease ()
-{
-	local cur_=$1
-
-	case "$cur_" in
-	--*=)
-		;;
-	*:*)
-		__gitcomp_nl "$(__git_refs)" "" "${cur_#*:}"
-		;;
-	*)
-		__gitcomp_nl "$(__git_refs)" "" "$cur_"
-		;;
-	esac
-}
-
 _git_push ()
 {
 	case "$prev" in
 	--repo)
 		__gitcomp_nl "$(__git_remotes)"
 		return
-		;;
-	--recurse-submodules)
-		__gitcomp "$__git_push_recurse_submodules"
-		return
-		;;
 	esac
 	case "$cur" in
 	--repo=*)
 		__gitcomp_nl "$(__git_remotes)" "" "${cur##--repo=}"
 		return
 		;;
-	--recurse-submodules=*)
-		__gitcomp "$__git_push_recurse_submodules" "" "${cur##--recurse-submodules=}"
-		return
-		;;
-	--force-with-lease=*)
-		__git_complete_force_with_lease "${cur##--force-with-lease=}"
-		return
-		;;
 	--*)
 		__gitcomp "
 			--all --mirror --tags --dry-run --force --verbose
-			--quiet --prune --delete --follow-tags
 			--receive-pack= --repo= --set-upstream
-			--force-with-lease --force-with-lease= --recurse-submodules=
 		"
 		return
 		;;
@@ -1923,7 +1638,6 @@ _git_rebase ()
 			--committer-date-is-author-date --ignore-date
 			--ignore-whitespace --whitespace=
 			--autosquash --fork-point --no-fork-point
-			--autostash
 			"
 
 		return
@@ -2104,10 +1818,6 @@ _git_config ()
 		;;
 	sendemail.suppresscc)
 		__gitcomp "$__git_send_email_suppresscc_options"
-		return
-		;;
-	sendemail.transferencoding)
-		__gitcomp "7bit 8bit quoted-printable base64"
 		return
 		;;
 	--get|--get-all|--unset|--unset-all)
@@ -2577,7 +2287,6 @@ _git_show ()
 		;;
 	--*)
 		__gitcomp "--pretty= --format= --abbrev-commit --oneline
-			--show-signature
 			$__git_diff_common_options
 			"
 		return
@@ -2783,16 +2492,6 @@ _git_tag ()
 		__gitcomp_nl "$(__git_refs)"
 		;;
 	esac
-
-	case "$cur" in
-	--*)
-		__gitcomp "
-			--list --delete --verify --annotate --message --file
-			--sign --cleanup --local-user --force --column --sort
-			--contains --points-at
-			"
-		;;
-	esac
 }
 
 _git_whatchanged ()
@@ -2848,7 +2547,6 @@ __git_main ()
 
 	local expansion=$(__git_aliased_command "$command")
 	if [ -n "$expansion" ]; then
-		words[1]=$expansion
 		completion_func="_git_${expansion//-/_}"
 		declare -f $completion_func >/dev/null && $completion_func
 	fi
