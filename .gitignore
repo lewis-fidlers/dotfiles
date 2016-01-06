@@ -5,6 +5,7 @@
 *.DS_Store
 *.idea
 *.iml
+.zsh_history
 Procfile
 Procfile.local
 .env
