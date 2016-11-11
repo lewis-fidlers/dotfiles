@@ -1,37 +1,50 @@
 set nocursorline " don't highlight current line
 set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.idea/*,*/.DS_Store,*/vendor
 set background=dark
-set guifont=Inconsolata:h20
+set guifont=Inconsolata\ for\ Powerline:h20
+set tags=./tags;/
 
 
 " keyboard shortcuts
 inoremap jj <ESC>
 inoremap {<space> {<space><space>}<ESC>hi
-inoremap " ""<ESC>i
-inoremap ( ()<ESC>i
 :imap ,t <ESC>:<C-U>CtrlP<CR>
 :nmap f <Plug>(easymotion-sn)
 :nmap F <Plug>(easymotion-s)
-nnoremap <C-w> :FixWhitespace<CR>
 
 :command WQ wq
 :command Wq wq
 :command W w
 :command Q q
 
+" Insert todays date by typing 'xdate.' in insert mode.
+iabbrev xdate <c-r>=strftime("%d/%m/%y %H:%M:%S")<cr>
+
 " highligh tnd("%")let @+ = expand("%")let @+ = expand("%")"")"")"")search
 "set hlsearch
 "nmap <leader>hl :let @/ = ""<CR>
 
 " gui settings
-if (&t_Co == 256 || has('gui_running'))
-  if ($TERM_PROGRAM == 'iTerm.app')
-    colorscheme solarized
-  else
-    colorscheme solarized
-  endif
-endif
+" if (&t_Co == 256 || has('gui_running'))
+"   if ($TERM_PROGRAM == 'iTerm.app')
+"     colorscheme solarized
+"   else
+"     colorscheme solarized
+"   endif
+" endif
+let g:two_firewatch_italics=1
+colo two-firewatch
 
+
+" Which browser should vim universal text linking use.
+let g:utl_cfg_hdl_scm_http_system = "silent !open -a Safari '%u'"
+" How to open images with vim universal text linking.
+
+let g:syntastic_aggregate_errors = 1
+let g:syntastic_ruby_checkers = ['mri', 'rubocop']
+let g:syntastic_mode_map = {
+        \ 'mode': 'active',
+                \ "active_filetypes": ["ruby"] }
 " Disambiguate ,a & ,t from the Align plugin, making them fast again.
 "
 " This section is here to prevent AlignMaps from adding a bunch of mappings" that interfere with the very-common ,a and ,t mappings. This will get run
@@ -46,3 +59,70 @@ function! s:RemoveConflictingAlignMaps()
 endfunction
 command! -nargs=0 RemoveConflictingAlignMaps call s:RemoveConflictingAlignMaps()
 silent! autocmd VimEnter * RemoveConflictingAlignMaps
+
+
+" Vim Airline
+"
+let g:airline#extensions#branch#enabled = 0 "Disable branch anme in vim airline status bar.
+let g:airline_skip_empty_sections = 1
+"
+" LIGHT LINE
+let g:lightline = {
+      \ 'colorscheme': 'seoul256',
+      \ 'mode_map': { 'c': 'NORMAL' },
+      \ 'active': {
+      \   'left': [ [ 'mode', 'paste' ], [ 'relativepath'] ],
+      \    'right': [ [ 'syntastic', 'lineinfo' ], ['percent'], [ 'filetype' ] ]
+      \ },
+      \ 'component_visible_condition': {
+      \   'readonly': '(&filetype!="help"&& &readonly)',
+      \   'modified': '(&filetype!="help"&&(&modified||!&modifiable))'
+      \ },
+      \ 'component_function': {
+      \   'modified': 'LightLineModified',
+      \   'fugitive': 'LightLineFugitive',
+      \   'filename': 'LightLineFilename',
+      \   'fileformat': 'LightLineFileformat',
+      \   'filetype': 'LightLineFiletype',
+      \   'fileencoding': 'LightLineFileencoding',
+      \   'mode': 'LightLineMode',
+      \ },
+      \ 'separator': { 'left': '', 'right': '' },
+      \ 'subseparator': { 'left': '', 'right': '' }
+      \ }
+
+function! LightLineModified()
+  return &ft =~ 'help\|vimfiler' ? '' : &modified ? '+' : &modifiable ? '' : '-'
+endfunction
+
+function! LightLineFilename()
+  return (&ft == 'vimfiler' ? vimfiler#get_status_string() :
+        \  &ft == 'unite' ? unite#get_status_string() :
+        \  &ft == 'vimshell' ? vimshell#get_status_string() :
+        \ '' != expand('%:t') ? expand('%:t') : '[No Name]') .
+        \ ('' != LightLineModified() ? ' ' . LightLineModified() : '')
+endfunction
+
+function! LightLineFugitive()
+  if &ft !~? 'vimfiler' && exists("*fugitive#head")
+    let branch = fugitive#head()
+    return branch !=# '' ? branch : ''
+  endif
+  return ''
+endfunction
+
+function! LightLineFileformat()
+  return winwidth(0) > 70 ? &fileformat : ''
+endfunction
+
+function! LightLineFiletype()
+  return winwidth(0) > 70 ? (&filetype !=# '' ? &filetype : 'no ft') : ''
+endfunction
+
+function! LightLineFileencoding()
+  return winwidth(0) > 70 ? (&fenc !=# '' ? &fenc : &enc) : ''
+endfunction
+
+function! LightLineMode()
+  return winwidth(0) > 60 ? lightline#mode() : ''
+endfunction
