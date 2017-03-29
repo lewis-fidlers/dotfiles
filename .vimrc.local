@@ -1,14 +1,18 @@
 set nocursorline " don't highlight current line
-set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.idea/*,*/.DS_Store,*/vendor
+set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.idea/*,*/.DS_Store,*/vendor,*/tmp/cache
 set background=dark
 set guifont=Inconsolata\ for\ Powerline:h20
 set tags=./tags;/
+
+" Define where emacs is installed. needed for vim orgmode export.
+let g:org_export_init_script="~/.emacs/"
+let g:org_export_emacs="/usr/local/bin/emacs"
 
 
 " keyboard shortcuts
 inoremap jj <ESC>
 inoremap {<space> {<space><space>}<ESC>hi
-:imap ,t <ESC>:<C-U>CtrlP<CR>
+:map <leader>r :! rubocop -a %<cr>
 :nmap f <Plug>(easymotion-sn)
 :nmap F <Plug>(easymotion-s)
 
@@ -18,23 +22,21 @@ inoremap {<space> {<space><space>}<ESC>hi
 :command Q q
 
 " Insert todays date by typing 'xdate.' in insert mode.
-iabbrev xdate <c-r>=strftime("%d/%m/%y %H:%M:%S")<cr>
+iabbrev xdate <c-r>=strftime("%d-%m-%y %H:%M:%S")<cr>
 
 " highligh tnd("%")let @+ = expand("%")let @+ = expand("%")"")"")"")search
 "set hlsearch
 "nmap <leader>hl :let @/ = ""<CR>
 
 " gui settings
-" if (&t_Co == 256 || has('gui_running'))
-"   if ($TERM_PROGRAM == 'iTerm.app')
-"     colorscheme solarized
-"   else
-"     colorscheme solarized
-"   endif
-" endif
-let g:two_firewatch_italics=1
-colo two-firewatch
+if (&t_Co == 256 || has('gui_running'))
+  if ($TERM_PROGRAM == 'iTerm.app')
+    colorscheme solarized
+  endif
+endif
 
+    let g:two_firewatch_italics=1
+    colo two-firewatch
 
 " Which browser should vim universal text linking use.
 let g:utl_cfg_hdl_scm_http_system = "silent !open -a Safari '%u'"
@@ -125,4 +127,14 @@ endfunction
 
 function! LightLineMode()
   return winwidth(0) > 60 ? lightline#mode() : ''
+endfunction
+
+command! -nargs=0 -bar Qargs execute 'args ' . QuickfixFilenames()
+function! QuickfixFilenames()
+  " Building a hash ensures we get each buffer only once
+  let buffer_numbers = {}
+  for quickfix_item in getqflist()
+    let buffer_numbers[quickfix_item['bufnr']] = bufname(quickfix_item['bufnr'])
+  endfor
+  return join(values(buffer_numbers))
 endfunction
